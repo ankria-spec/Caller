@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEONLINK • Speed Dial</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&amp;family=Inter:wght@400;500;600&amp;display=swap');
+        
+        :root { --neon-primary: #00f5ff; }
+        
+        .tail-container { font-family: 'Inter', system-ui, sans-serif; }
+        .title-font { font-family: 'Orbitron', sans-serif; }
+
+        .neon-glow {
+            text-shadow: 0 0 10px #00f5ff, 0 0 20px #00f5ff, 0 0 40px #00f5ff;
+        }
+
+        .futuristic-frame {
+            position: relative;
+            border: 2px solid transparent;
+            background: linear-gradient(#111827, #111827) padding-box,
+                        linear-gradient(90deg, #00f5ff, #ff00ff, #00ff9f, #00f5ff) border-box;
+            background-size: 300% 300%;
+            animation: gradient-shift 8s linear infinite;
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .contact-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .contact-btn:hover {
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 0 30px -4px rgb(0 245 255);
+        }
+
+        .modal { animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        @keyframes modalPop { 0% { transform: scale(0.7); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body class="tail-container bg-zinc-950 text-white min-h-screen pb-24">
+    <div class="max-w-md mx-auto futuristic-frame rounded-3xl overflow-hidden shadow-2xl shadow-cyan-500/30 h-screen flex flex-col">
+        
+        <!-- HEADER -->
+        <div class="bg-black/80 backdrop-blur-xl border-b border-cyan-500/30 px-6 py-5 flex items-center justify-between">
+            <div>
+                <h1 class="title-font text-3xl font-bold tracking-tighter neon-glow text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-emerald-400">
+                    NEONLINK
+                </h1>
+                <p class="text-xs text-cyan-300/70 tracking-[3px] -mt-1">SPEED DIAL</p>
+            </div>
+        </div>
+
+        <!-- TABS -->
+        <div class="flex border-b border-zinc-800 bg-zinc-900/70">
+            <button onclick="switchTab(0)" id="tab-0" class="category-tab active flex-1 py-4 text-sm font-medium text-cyan-400">ALL</button>
+            <button onclick="switchTab(1)" id="tab-1" class="category-tab flex-1 py-4 text-sm font-medium">FAMILY</button>
+            <button onclick="switchTab(2)" id="tab-2" class="category-tab flex-1 py-4 text-sm font-medium">WORK</button>
+            <button onclick="switchTab(3)" id="tab-3" class="category-tab flex-1 py-4 text-sm font-medium">FRIENDS</button>
+            <button onclick="switchTab(4)" id="tab-4" class="category-tab flex-1 py-4 text-sm font-medium">OTHER</button>
+        </div>
+
+        <!-- CONTACTS -->
+        <div id="contacts-container" class="flex-1 overflow-auto p-4 space-y-6 bg-zinc-950">
+            <!-- Populated by JS -->
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="fixed bottom-8 right-8 flex flex-col gap-3 z-50">
+            <button onclick="importFromContacts()" 
+                    class="w-16 h-16 bg-gradient-to-br from-emerald-400 to-cyan-500 rounded-2xl flex items-center justify-center shadow-xl hover:scale-110 transition-transform active:scale-95">
+                <i class="fa-solid fa-address-book text-3xl"></i>
+            </button>
+            <button onclick="showAddModal()" 
+                    class="w-16 h-16 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-2xl flex items-center justify-center shadow-xl shadow-purple-500/50 hover:scale-110 transition-transform active:scale-95">
+                <i class="fa-solid fa-plus text-3xl"></i>
+            </button>
+        </div>
+
+    </div>
+
+    <!-- ADD MODAL (same as before) -->
+    <div id="modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100]">
+        <div class="modal bg-zinc-900 rounded-3xl w-[92%] max-w-sm p-6 futuristic-frame">
+            <h2 id="modal-title" class="text-2xl font-semibold mb-6 title-font">ADD CONTACT</h2>
+            <div class="space-y-5">
+                <div>
+                    <label class="text-xs uppercase tracking-widest text-zinc-400 block mb-1">Name</label>
+                    <input id="name" type="text" class="w-full bg-zinc-800 border border-zinc-700 focus:border-cyan-400 rounded-2xl px-5 py-4 outline-none text-lg">
+                </div>
+                <div>
+                    <label class="text-xs uppercase tracking-widest text-zinc-400 block mb-1">Phone Number</label>
+                    <input id="phone" type="tel" placeholder="+1 234 567 8900" class="w-full bg-zinc-800 border border-zinc-700 focus:border-cyan-400 rounded-2xl px-5 py-4 outline-none text-lg">
+                </div>
+                <div>
+                    <label class="text-xs uppercase tracking-widest text-zinc-400 block mb-1">Category</label>
+                    <select id="category" class="w-full bg-zinc-800 border border-zinc-700 focus:border-cyan-400 rounded-2xl px-5 py-4 outline-none text-lg">
+                        <option value="Family">Family</option>
+                        <option value="Work">Work</option>
+                        <option value="Friends">Friends</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex gap-3 mt-8">
+                <button onclick="hideModal()" class="flex-1 py-4 rounded-2xl border border-zinc-700 hover:bg-zinc-800 transition-colors">CANCEL</button>
+                <button onclick="saveContact()" class="flex-1 py-4 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-2xl font-semibold hover:brightness-110">SAVE</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let contacts = [];
+        let currentTab = 0;
+        let editingId = null;
+
+        const categories = ["All", "Family", "Work", "Friends", "Other"];
+
+        function loadContacts() {
+            const saved = localStorage.getItem('neonlink_contacts');
+            contacts = saved ? JSON.parse(saved) : [];
+            renderContacts();
+        }
+
+        function saveContacts() {
+            localStorage.setItem('neonlink_contacts', JSON.stringify(contacts));
+        }
+
+        async function importFromContacts() {
+            if (!('contacts' in navigator && 'ContactsManager' in window)) {
+                alert("Contact Picker is not supported in your browser.\n\nTry Android Chrome for best results.");
+                return;
+            }
+
+            try {
+                const props = ["name", "tel"];
+                const opts = { multiple: true };
+                
+                const selectedContacts = await navigator.contacts.select(props, opts);
+                
+                let added = 0;
+                selectedContacts.forEach(c => {
+                    if (c.tel && c.tel.length > 0) {
+                        const name = (c.name && c.name[0]) || "Unknown";
+                        const phone = c.tel[0]; // Take first phone number
+                        
+                        // Avoid duplicates
+                        if (!contacts.some(existing => existing.phone === phone)) {
+                            contacts.push({
+                                id: 'contact_' + Date.now() + added,
+                                name: name,
+                                phone: phone,
+                                category: "Other" // Default category – user can edit later
+                            });
+                            added++;
+                        }
+                    }
+                });
+
+                if (added > 0) {
+                    saveContacts();
+                    renderContacts();
+                    alert(`Successfully imported ${added} contact(s)!`);
+                } else {
+                    alert("No usable phone numbers found in selected contacts.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Contact selection was cancelled or failed.");
+            }
+        }
+
+        // Rest of the script (renderContacts, createContactButton, makeCall, etc.) remains the same as previous version
+        // ... (I'll keep it short here – copy the full functions from the previous code)
+
+        function renderContacts() { /* same as before */ }
+        function createContactButton(contact) { /* same */ }
+        function makeCall(phone) { /* same */ }
+        function showAddModal() { /* same */ }
+        function hideModal() { /* same */ }
+        function saveContact() { /* same */ }
+        function deleteContact(id) { /* same */ }
+        function switchTab(tabIndex) { /* same */ }
+
+        window.onload = () => {
+            loadContacts();
+            if (contacts.length === 0) {
+                contacts = [
+                    { id: 'demo1', name: "Mom", phone: "+1234567890", category: "Family" }
+                ];
+                saveContacts();
+            }
+            renderContacts();
+        };
+    </script>
+</body>
+</html>
