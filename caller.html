@@ -33,6 +33,7 @@
 
         .contact-btn {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
         }
         .contact-btn:hover {
             transform: translateY(-4px) scale(1.03);
@@ -49,7 +50,6 @@
                 <h1 class="title-font text-3xl font-bold tracking-tighter neon-glow text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-emerald-400">
                     NEONLINK
                 </h1>
-                <p class="text-xs text-cyan-300/70 tracking-[3px] -mt-1">SPEED DIAL</p>
             </div>
         </div>
 
@@ -62,27 +62,23 @@
             <button onclick="switchTab(4)" id="tab-4" class="category-tab flex-1 py-4 text-sm font-medium whitespace-nowrap px-4">OTHER</button>
         </div>
 
-        <!-- CONTACTS CONTAINER -->
+        <!-- CONTACTS -->
         <div id="contacts-container" class="flex-1 overflow-auto p-4 space-y-6 bg-zinc-950">
             <!-- Populated by JS -->
         </div>
 
         <!-- FLOATING BUTTONS -->
         <div class="fixed bottom-8 right-8 flex flex-col gap-3 z-50">
-            <!-- Import Button -->
-            <button onclick="importFromContacts()" 
-                    class="w-16 h-16 bg-gradient-to-br from-emerald-400 to-cyan-500 rounded-2xl flex items-center justify-center shadow-xl shadow-emerald-500/50 hover:scale-110 transition-transform">
+            <button onclick="importFromContacts()" class="w-16 h-16 bg-gradient-to-br from-emerald-400 to-cyan-500 rounded-2xl flex items-center justify-center shadow-xl hover:scale-110 transition-transform">
                 <i class="fa-solid fa-address-book text-3xl"></i>
             </button>
-            <!-- Manual Add -->
-            <button onclick="showAddModal()" 
-                    class="w-16 h-16 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-2xl flex items-center justify-center shadow-xl shadow-purple-500/50 hover:scale-110 transition-transform">
+            <button onclick="showAddModal()" class="w-16 h-16 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-2xl flex items-center justify-center shadow-xl hover:scale-110 transition-transform">
                 <i class="fa-solid fa-plus text-3xl"></i>
             </button>
         </div>
     </div>
 
-    <!-- ADD MODAL -->
+    <!-- ADD / EDIT MODAL -->
     <div id="modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100]">
         <div class="modal bg-zinc-900 rounded-3xl w-[92%] max-w-sm p-6 futuristic-frame">
             <h2 id="modal-title" class="text-2xl font-semibold mb-6 title-font">ADD CONTACT</h2>
@@ -115,6 +111,7 @@
     <script>
         let contacts = [];
         let currentTab = 0;
+        let editingId = null;
 
         function loadContacts() {
             const saved = localStorage.getItem('neonlink_contacts');
@@ -128,42 +125,29 @@
 
         async function importFromContacts() {
             if (!('contacts' in navigator)) {
-                alert("Contact Picker not supported in this browser.\n\nBest on Android Chrome.");
+                alert("Contact Picker not supported.\nBest on Android Chrome.");
                 return;
             }
-
             try {
                 const selected = await navigator.contacts.select(["name", "tel"], { multiple: true });
-                
-                let addedCount = 0;
-                selected.forEach(contact => {
-                    if (contact.tel && contact.tel.length > 0) {
-                        const name = contact.name && contact.name[0] ? contact.name[0] : "Unknown";
-                        const phone = contact.tel[0].replace(/\s+/g, ''); // clean number
-                        
-                        // Avoid duplicates
-                        if (!contacts.some(c => c.phone === phone)) {
-                            contacts.push({
-                                id: 'c_' + Date.now() + addedCount,
-                                name: name,
-                                phone: phone,
-                                category: "Other"
-                            });
-                            addedCount++;
+                let added = 0;
+                selected.forEach(c => {
+                    if (c.tel && c.tel.length > 0) {
+                        const name = c.name?.[0] || "Unknown";
+                        const phone = c.tel[0].replace(/\s+/g, '');
+                        if (!contacts.some(ex => ex.phone === phone)) {
+                            contacts.push({ id: 'c_' + Date.now() + added, name, phone, category: "Other" });
+                            added++;
                         }
                     }
                 });
-
-                if (addedCount > 0) {
+                if (added > 0) {
                     saveContacts();
                     renderContacts();
-                    alert(`✅ Successfully imported ${addedCount} contact(s)! Check the OTHER tab.`);
-                } else {
-                    alert("No new contacts with phone numbers were found.");
+                    alert(`✅ Imported ${added} contacts! Go to OTHER tab and tap to edit category.`);
                 }
-            } catch (err) {
-                console.error(err);
-                alert("Contact selection cancelled or failed.");
+            } catch (e) {
+                alert("Selection cancelled.");
             }
         }
 
@@ -176,12 +160,10 @@
                 : contacts.filter(c => c.category === ["All","Family","Work","Friends","Other"][currentTab]);
 
             if (filtered.length === 0) {
-                container.innerHTML = `
-                    <div class="h-full flex flex-col items-center justify-center text-center py-20 text-zinc-500">
-                        <i class="fa-solid fa-address-book text-6xl mb-6 opacity-30"></i>
-                        <p class="text-lg">No contacts yet</p>
-                        <p class="text-sm mt-2">Tap the green button to import</p>
-                    </div>`;
+                container.innerHTML = `<div class="h-full flex flex-col items-center justify-center text-center py-20 text-zinc-500">
+                    <i class="fa-solid fa-address-book text-6xl mb-6 opacity-30"></i>
+                    <p class="text-lg">No contacts yet</p>
+                </div>`;
                 return;
             }
 
@@ -190,20 +172,26 @@
 
             filtered.forEach(contact => {
                 const div = document.createElement('div');
-                div.className = `contact-btn bg-zinc-900 border border-zinc-700 hover:border-cyan-400 rounded-3xl p-5 cursor-pointer`;
+                div.className = `contact-btn bg-zinc-900 border border-zinc-700 hover:border-cyan-400 rounded-3xl p-5 cursor-pointer group`;
                 div.innerHTML = `
-                    <div class="text-center">
+                    <div onclick="makeCall('${contact.phone}')" class="text-center">
                         <div class="w-16 h-16 mx-auto bg-gradient-to-br from-purple-500 to-cyan-400 rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-inner">
                             ${contact.name[0].toUpperCase()}
                         </div>
                         <div class="font-medium text-lg">${contact.name}</div>
                         <div class="text-cyan-400 text-sm font-mono mt-1">${contact.phone}</div>
                     </div>
+                    <div class="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                        <button onclick="editContact('${contact.id}'); event.stopImmediatePropagation();" class="w-8 h-8 bg-zinc-800 hover:bg-blue-600 rounded-xl flex items-center justify-center">
+                            <i class="fa-solid fa-pen text-xs"></i>
+                        </button>
+                        <button onclick="deleteContact('${contact.id}'); event.stopImmediatePropagation();" class="w-8 h-8 bg-zinc-800 hover:bg-red-600 rounded-xl flex items-center justify-center">
+                            <i class="fa-solid fa-trash text-xs"></i>
+                        </button>
+                    </div>
                 `;
-                div.onclick = () => makeCall(contact.phone);
                 grid.appendChild(div);
             });
-
             container.appendChild(grid);
         }
 
@@ -212,11 +200,23 @@
         }
 
         function showAddModal() {
+            editingId = null;
+            document.getElementById('modal-title').textContent = "ADD CONTACT";
+            document.getElementById('name').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('category').value = 'Other';
             document.getElementById('modal').classList.remove('hidden');
         }
 
-        function hideModal() {
-            document.getElementById('modal').classList.add('hidden');
+        function editContact(id) {
+            const contact = contacts.find(c => c.id === id);
+            if (!contact) return;
+            editingId = id;
+            document.getElementById('modal-title').textContent = "EDIT CONTACT";
+            document.getElementById('name').value = contact.name;
+            document.getElementById('phone').value = contact.phone;
+            document.getElementById('category').value = contact.category;
+            document.getElementById('modal').classList.remove('hidden');
         }
 
         function saveContact() {
@@ -225,20 +225,41 @@
             const category = document.getElementById('category').value;
 
             if (!name || !phone) {
-                alert("Name and phone are required");
+                alert("Name and phone number are required");
                 return;
             }
 
-            contacts.push({
-                id: 'c_' + Date.now(),
-                name: name,
-                phone: phone,
-                category: category
-            });
+            if (editingId) {
+                const contact = contacts.find(c => c.id === editingId);
+                if (contact) {
+                    contact.name = name;
+                    contact.phone = phone;
+                    contact.category = category;
+                }
+            } else {
+                contacts.push({
+                    id: 'c_' + Date.now(),
+                    name: name,
+                    phone: phone,
+                    category: category
+                });
+            }
 
             saveContacts();
             hideModal();
             renderContacts();
+        }
+
+        function deleteContact(id) {
+            if (confirm("Delete this contact?")) {
+                contacts = contacts.filter(c => c.id !== id);
+                saveContacts();
+                renderContacts();
+            }
+        }
+
+        function hideModal() {
+            document.getElementById('modal').classList.add('hidden');
         }
 
         function switchTab(tabIndex) {
@@ -250,10 +271,8 @@
             renderContacts();
         }
 
-        // Initialize
         window.onload = () => {
             loadContacts();
-            // Demo if empty
             if (contacts.length === 0) {
                 contacts = [{ id: "demo1", name: "Mom", phone: "+1234567890", category: "Family" }];
                 saveContacts();
