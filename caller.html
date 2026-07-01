@@ -74,7 +74,7 @@
         </div>
     </div>
 
-    <!-- מודל הוספה/עריכה -->
+    <!-- מודל -->
     <div id="modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100]">
         <div class="modal bg-zinc-900 rounded-3xl w-[92%] max-w-sm p-6 futuristic-frame">
             <h2 id="modal-title" class="text-2xl font-semibold mb-6 title-font">הוסף איש קשר</h2>
@@ -137,11 +137,15 @@
         function renderCategoryScreen() {
             const grid = document.getElementById('category-grid');
             grid.innerHTML = '';
+            
             categories.forEach(cat => {
                 const config = categoryConfig[cat] || { icon: "📁", color: "from-zinc-700 to-zinc-800" };
                 const btn = document.createElement('div');
                 btn.className = `category-btn bg-gradient-to-br ${config.color} border border-white/20 rounded-3xl p-8 cursor-pointer text-center shadow-xl`;
-                btn.innerHTML = `<div class="text-6xl mb-4">\( {config.icon}</div><div class="font-semibold text-2xl"> \){cat === "All" ? "הכל" : cat}</div>`;
+                btn.innerHTML = `
+                    <div class="text-6xl mb-4">${config.icon}</div>
+                    <div class="font-semibold text-2xl">${cat === "All" ? "הכל" : cat}</div>
+                `;
                 btn.onclick = () => openCategory(cat);
                 grid.appendChild(btn);
             });
