@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="he" dir="rtl" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,85 +36,79 @@
         }
         .category-btn:hover {
             transform: scale(1.08) translateY(-8px);
-            box-shadow: 0 0 40px -10px rgb(0 245 255);
         }
     </style>
 </head>
-<body class="tail-container bg-zinc-950 text-white min-h-screen">
+<body class="tail-container bg-zinc-950 text-white min-h-screen" dir="rtl">
     <div id="main-app" class="max-w-md mx-auto futuristic-frame rounded-3xl overflow-hidden shadow-2xl shadow-cyan-500/30 h-screen flex flex-col">
 
-        <!-- CATEGORY HOME SCREEN -->
+        <!-- מסך קטגוריות ראשי -->
         <div id="category-screen">
             <div class="bg-black/80 backdrop-blur-xl border-b border-cyan-500/30 px-6 py-8">
                 <h1 class="title-font text-4xl font-bold tracking-tighter neon-glow text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-emerald-400 text-center">
                     NEONLINK
                 </h1>
-                <p class="text-center text-cyan-300/70 mt-1">Choose Category</p>
+                <p class="text-center text-cyan-300/70 mt-1">בחר קטגוריה</p>
             </div>
 
             <div id="category-grid" class="p-6 grid grid-cols-2 gap-5 overflow-auto flex-1">
-                <!-- Populated by JS -->
+                <!-- יימלא ע"י JS -->
             </div>
 
             <div class="p-6 border-t border-zinc-800">
                 <button onclick="addNewCategory()" 
-                        class="w-full py-5 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-3xl font-semibold text-lg flex items-center justify-center gap-3 hover:brightness-110 transition-all">
-                    <i class="fa-solid fa-plus"></i> ADD NEW CATEGORY
+                        class="w-full py-5 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-3xl font-semibold text-lg flex items-center justify-center gap-3 hover:brightness-110">
+                    <i class="fa-solid fa-plus"></i> הוסף קטגוריה חדשה
                 </button>
             </div>
         </div>
 
-        <!-- CONTACTS SCREEN -->
+        <!-- מסך אנשי קשר -->
         <div id="contacts-screen" class="hidden flex-col h-full">
-            <!-- Header with back button -->
             <div class="bg-black/80 backdrop-blur-xl border-b border-cyan-500/30 px-6 py-5 flex items-center gap-4">
-                <button onclick="backToCategories()" class="text-3xl text-cyan-400">
-                    ←
-                </button>
-                <div>
-                    <h2 id="current-category-title" class="title-font text-2xl font-bold"></h2>
-                </div>
+                <button onclick="backToCategories()" class="text-3xl text-cyan-400">←</button>
+                <h2 id="current-category-title" class="title-font text-2xl font-bold"></h2>
             </div>
 
             <div id="contacts-container" class="flex-1 overflow-auto p-4 space-y-6 bg-zinc-950">
-                <!-- Contacts populated by JS -->
+                <!-- יימלא ע"י JS -->
             </div>
 
-            <!-- Floating buttons -->
+            <!-- כפתורי פעולה -->
             <div class="fixed bottom-8 right-8 flex flex-col gap-3 z-50">
-                <button onclick="importFromContacts()" class="w-16 h-16 bg-gradient-to-br from-emerald-400 to-cyan-500 rounded-2xl flex items-center justify-center shadow-xl hover:scale-110 transition-transform">
+                <button onclick="importFromContacts()" 
+                        class="w-16 h-16 bg-gradient-to-br from-emerald-400 to-cyan-500 rounded-2xl flex items-center justify-center shadow-xl hover:scale-110 transition-transform">
                     <i class="fa-solid fa-address-book text-3xl"></i>
                 </button>
-                <button onclick="showAddModal()" class="w-16 h-16 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-2xl flex items-center justify-center shadow-xl hover:scale-110 transition-transform">
+                <button onclick="showAddModal()" 
+                        class="w-16 h-16 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-2xl flex items-center justify-center shadow-xl hover:scale-110 transition-transform">
                     <i class="fa-solid fa-plus text-3xl"></i>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- ADD / EDIT MODAL -->
+    <!-- מודל הוספה / עריכה -->
     <div id="modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100]">
         <div class="modal bg-zinc-900 rounded-3xl w-[92%] max-w-sm p-6 futuristic-frame">
-            <h2 id="modal-title" class="text-2xl font-semibold mb-6 title-font">ADD CONTACT</h2>
+            <h2 id="modal-title" class="text-2xl font-semibold mb-6 title-font">הוסף איש קשר</h2>
             <div class="space-y-5">
                 <div>
-                    <label class="text-xs uppercase tracking-widest text-zinc-400 block mb-1">Name</label>
+                    <label class="text-xs uppercase tracking-widest text-zinc-400 block mb-1">שם</label>
                     <input id="name" type="text" class="w-full bg-zinc-800 border border-zinc-700 focus:border-cyan-400 rounded-2xl px-5 py-4 outline-none text-lg">
                 </div>
                 <div>
-                    <label class="text-xs uppercase tracking-widest text-zinc-400 block mb-1">Phone Number</label>
-                    <input id="phone" type="tel" placeholder="+1234567890" class="w-full bg-zinc-800 border border-zinc-700 focus:border-cyan-400 rounded-2xl px-5 py-4 outline-none text-lg">
+                    <label class="text-xs uppercase tracking-widest text-zinc-400 block mb-1">מספר טלפון</label>
+                    <input id="phone" type="tel" placeholder="+972 50-123-4567" class="w-full bg-zinc-800 border border-zinc-700 focus:border-cyan-400 rounded-2xl px-5 py-4 outline-none text-lg">
                 </div>
                 <div>
-                    <label class="text-xs uppercase tracking-widest text-zinc-400 block mb-1">Category</label>
-                    <select id="category" class="w-full bg-zinc-800 border border-zinc-700 focus:border-cyan-400 rounded-2xl px-5 py-4 outline-none text-lg">
-                        <!-- Populated dynamically -->
-                    </select>
+                    <label class="text-xs uppercase tracking-widest text-zinc-400 block mb-1">קטגוריה</label>
+                    <select id="category" class="w-full bg-zinc-800 border border-zinc-700 focus:border-cyan-400 rounded-2xl px-5 py-4 outline-none text-lg"></select>
                 </div>
             </div>
             <div class="flex gap-3 mt-8">
-                <button onclick="hideModal()" class="flex-1 py-4 rounded-2xl border border-zinc-700 hover:bg-zinc-800">CANCEL</button>
-                <button onclick="saveContact()" class="flex-1 py-4 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-2xl font-semibold">SAVE</button>
+                <button onclick="hideModal()" class="flex-1 py-4 rounded-2xl border border-zinc-700 hover:bg-zinc-800">ביטול</button>
+                <button onclick="saveContact()" class="flex-1 py-4 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-2xl font-semibold">שמור</button>
             </div>
         </div>
     </div>
@@ -122,6 +116,15 @@
     <script>
         let contacts = [];
         let categories = ["All", "Family", "Work", "Friends", "Other"];
+        
+        const categoryConfig = {
+            "All":     { icon: "🌐", color: "from-zinc-700 to-zinc-800", accent: "#67e8f9" },
+            "Family":  { icon: "👨‍👩‍👧‍👦", color: "from-pink-600 to-rose-600", accent: "#f472b6" },
+            "Work":    { icon: "💼", color: "from-blue-600 to-cyan-600", accent: "#22d3ee" },
+            "Friends": { icon: "👥", color: "from-violet-600 to-purple-600", accent: "#a78bfa" },
+            "Other":   { icon: "⭐", color: "from-amber-600 to-orange-600", accent: "#fbbf24" }
+        };
+
         let currentCategory = null;
         let editingId = null;
 
@@ -129,7 +132,7 @@
             const savedContacts = localStorage.getItem('neonlink_contacts');
             const savedCats = localStorage.getItem('neonlink_categories');
             contacts = savedContacts ? JSON.parse(savedContacts) : [];
-            if (savedCats) categories = JSON.parse(savedCats);
+            categories = savedCats ? JSON.parse(savedCats) : categories;
             renderCategoryScreen();
         }
 
@@ -143,11 +146,12 @@
             grid.innerHTML = '';
 
             categories.forEach(cat => {
+                const config = categoryConfig[cat] || { icon: "📁", color: "from-zinc-700 to-zinc-800", accent: "#67e8f9" };
                 const btn = document.createElement('div');
-                btn.className = `category-btn bg-zinc-900 border border-zinc-700 hover:border-cyan-400 rounded-3xl p-8 cursor-pointer text-center`;
+                btn.className = `category-btn bg-gradient-to-br ${config.color} border border-white/20 rounded-3xl p-8 cursor-pointer text-center shadow-xl`;
                 btn.innerHTML = `
-                    <div class="text-5xl mb-4">${cat === "All" ? "🌐" : "👥"}</div>
-                    <div class="font-semibold text-xl">${cat}</div>
+                    <div class="text-6xl mb-4">${config.icon}</div>
+                    <div class="font-semibold text-2xl">${cat === "All" ? "הכל" : cat}</div>
                 `;
                 btn.onclick = () => openCategory(cat);
                 grid.appendChild(btn);
@@ -158,7 +162,7 @@
             currentCategory = cat;
             document.getElementById('category-screen').classList.add('hidden');
             document.getElementById('contacts-screen').classList.remove('hidden');
-            document.getElementById('current-category-title').textContent = cat.toUpperCase();
+            document.getElementById('current-category-title').textContent = cat === "All" ? "כל אנשי הקשר" : cat;
             renderContacts();
         }
 
@@ -178,8 +182,8 @@
             if (filtered.length === 0) {
                 container.innerHTML = `
                     <div class="h-full flex flex-col items-center justify-center text-center py-20 text-zinc-500">
-                        <i class="fa-solid fa-address-book text-6xl mb-6 opacity-30"></i>
-                        <p class="text-lg">No contacts in this category</p>
+                        <p class="text-6xl mb-4">📭</p>
+                        <p class="text-xl">אין אנשי קשר בקטגוריה זו</p>
                     </div>`;
                 return;
             }
@@ -188,23 +192,24 @@
             grid.className = 'grid grid-cols-2 gap-4';
 
             filtered.forEach(contact => {
+                const config = categoryConfig[contact.category] || categoryConfig["Other"];
                 const div = document.createElement('div');
-                div.className = `contact-btn bg-zinc-900 border border-zinc-700 hover:border-cyan-400 rounded-3xl p-5 cursor-pointer group relative`;
+                div.className = `contact-btn bg-zinc-900 border border-white/10 rounded-3xl p-5 cursor-pointer group relative overflow-hidden`;
+                div.style.borderColor = config.accent + '40';
+                
                 div.innerHTML = `
                     <div onclick="makeCall('${contact.phone}')" class="text-center">
-                        <div class="w-16 h-16 mx-auto bg-gradient-to-br from-purple-500 to-cyan-400 rounded-2xl flex items-center justify-center text-3xl mb-4">
+                        <div class="w-20 h-20 mx-auto bg-gradient-to-br ${config.color} rounded-3xl flex items-center justify-center text-4xl mb-4 shadow-inner">
                             ${contact.name[0].toUpperCase()}
                         </div>
                         <div class="font-medium text-lg">${contact.name}</div>
-                        <div class="text-cyan-400 text-sm font-mono mt-1">${contact.phone}</div>
+                        <div class="text-sm font-mono mt-1" style="color: \( {config.accent}"> \){contact.phone}</div>
                     </div>
-                    <div class="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100">
-                        <button onclick="editContact('${contact.id}'); event.stopImmediatePropagation();" class="w-8 h-8 bg-zinc-800 hover:bg-blue-600 rounded-xl flex items-center justify-center">
-                            ✏️
-                        </button>
-                        <button onclick="deleteContact('${contact.id}'); event.stopImmediatePropagation();" class="w-8 h-8 bg-zinc-800 hover:bg-red-600 rounded-xl flex items-center justify-center">
-                            🗑
-                        </button>
+                    <div class="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                        <button onclick="editContact('${contact.id}'); event.stopImmediatePropagation();" 
+                                class="w-8 h-8 bg-black/70 hover:bg-blue-600 rounded-2xl flex items-center justify-center">✏️</button>
+                        <button onclick="deleteContact('${contact.id}'); event.stopImmediatePropagation();" 
+                                class="w-8 h-8 bg-black/70 hover:bg-red-600 rounded-2xl flex items-center justify-center">🗑</button>
                     </div>
                 `;
                 grid.appendChild(div);
@@ -216,21 +221,25 @@
             window.location.href = `tel:${phone}`;
         }
 
-        // Import, Add, Edit, Delete functions (same as previous version)
         async function importFromContacts() {
             if (!('contacts' in navigator)) {
-                alert("Contact Picker not supported on this browser.");
+                alert("Contact Picker לא נתמך בדפדפן זה.\nמומלץ להשתמש ב-Chrome באנדרואיד.");
                 return;
             }
             try {
                 const selected = await navigator.contacts.select(["name", "tel"], { multiple: true });
                 let added = 0;
                 selected.forEach(c => {
-                    if (c.tel?.length > 0) {
+                    if (c.tel && c.tel.length > 0) {
                         const name = c.name?.[0] || "Unknown";
                         const phone = c.tel[0].replace(/\s+/g, '');
                         if (!contacts.some(ex => ex.phone === phone)) {
-                            contacts.push({ id: 'c_' + Date.now() + added, name, phone, category: currentCategory !== "All" ? currentCategory : "Other" });
+                            contacts.push({
+                                id: 'c_' + Date.now() + added,
+                                name: name,
+                                phone: phone,
+                                category: currentCategory !== "All" ? currentCategory : "Other"
+                            });
                             added++;
                         }
                     }
@@ -238,14 +247,16 @@
                 if (added > 0) {
                     saveData();
                     renderContacts();
-                    alert(`Imported ${added} contacts!`);
+                    alert(`✅ נוספו ${added} אנשי קשר`);
                 }
-            } catch (e) {}
+            } catch (e) {
+                alert("הבחירה בוטלה");
+            }
         }
 
         function showAddModal() {
             editingId = null;
-            document.getElementById('modal-title').textContent = "ADD CONTACT";
+            document.getElementById('modal-title').textContent = "הוסף איש קשר";
             document.getElementById('name').value = '';
             document.getElementById('phone').value = '';
             updateCategorySelect();
@@ -256,7 +267,7 @@
             const contact = contacts.find(c => c.id === id);
             if (!contact) return;
             editingId = id;
-            document.getElementById('modal-title').textContent = "EDIT CONTACT";
+            document.getElementById('modal-title').textContent = "ערוך איש קשר";
             document.getElementById('name').value = contact.name;
             document.getElementById('phone').value = contact.phone;
             updateCategorySelect(contact.category);
@@ -282,7 +293,7 @@
             const category = document.getElementById('category').value;
 
             if (!name || !phone) {
-                alert("Name and phone are required");
+                alert("יש למלא שם ומספר טלפון");
                 return;
             }
 
@@ -294,7 +305,12 @@
                     contact.category = category;
                 }
             } else {
-                contacts.push({ id: 'c_' + Date.now(), name, phone, category });
+                contacts.push({
+                    id: 'c_' + Date.now(),
+                    name: name,
+                    phone: phone,
+                    category: category
+                });
             }
 
             saveData();
@@ -303,7 +319,7 @@
         }
 
         function deleteContact(id) {
-            if (confirm("Delete this contact?")) {
+            if (confirm("למחוק איש קשר זה?")) {
                 contacts = contacts.filter(c => c.id !== id);
                 saveData();
                 renderContacts();
@@ -315,24 +331,20 @@
         }
 
         function addNewCategory() {
-            const name = prompt("New category name:");
+            const name = prompt("שם הקטגוריה החדשה:");
             if (name && name.trim()) {
                 const newCat = name.trim();
                 if (!categories.includes(newCat)) {
                     categories.push(newCat);
                     saveData();
                     renderCategoryScreen();
+                } else {
+                    alert("קטגוריה כזו כבר קיימת");
                 }
             }
         }
 
-        window.onload = () => {
-            loadData();
-            if (contacts.length === 0) {
-                contacts = [{ id: "demo1", name: "Mom", phone: "+1234567890", category: "Family" }];
-                saveData();
-            }
-        };
+        window.onload = loadData;
     </script>
 </body>
 </html>
